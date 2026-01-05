@@ -1,9 +1,10 @@
-void postorder(TreeNode* node, vector<int>& res) {
-    if(node == NULL) return;
-    postorder(node->left, res);
-    postorder(node->right, res);
-    res.push_back(node->val);
-}
+class Solution {
+    void postorder(TreeNode* node, vector<int>& res) {
+        if(node == NULL) return;
+        postorder(node->left, res);
+        postorder(node->right, res);
+        res.push_back(node->val);
+    }
 public:
     vector<int> postorderTraversal(TreeNode* root) {
         vector<int> res;
