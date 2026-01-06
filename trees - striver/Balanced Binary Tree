@@ -1,0 +1,15 @@
+class Solution {
+    int findHeight(TreeNode* node, bool& res) {
+        if(node == NULL) return 0;
+        int leftHeight = findHeight(node->left, res);
+        int rightHeight = findHeight(node->right, res);
+        if(abs(leftHeight - rightHeight) > 1) res = false;
+        return 1 + max(leftHeight, rightHeight);
+    }
+public:
+    bool isBalanced(TreeNode* root) {
+        bool res = true;
+        findHeight(root, res);
+        return res;
+    }
+};
