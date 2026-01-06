@@ -1,0 +1,50 @@
+// Concept just like preorder + reverse the result (Two Stack)
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        if(root == NULL) return {};
+        vector<int> res;
+        stack<TreeNode*> st;
+        st.push(root);
+        while(!st.empty()) {
+            TreeNode* node = st.top(); st.pop();
+            res.push_back(node->val);
+            if(node->left != NULL) st.push(node->left);
+            if(node->right != NULL) st.push(node->right);
+        }
+        reverse(res.begin(), res.end());
+        return res;
+    }
+};
+
+
+// Single Stack
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        if(root == NULL) return {};
+        vector<int> res;
+        TreeNode* node = root;
+        stack<TreeNode*> st;
+        while(node != NULL || !st.empty()) {
+            if(node != NULL) {
+                st.push(node);
+                node = node->left;
+            } else {
+                TreeNode* temp = st.top();
+                if(temp->right != NULL) {
+                    node = temp->right;
+                } else {
+                    st.pop();
+                    res.push_back(temp->val);
+                    while(!st.empty() && st.top()->right == temp) {
+                        res.push_back(st.top()->val);
+                        temp = st.top();
+                        st.pop();
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
