@@ -1,0 +1,15 @@
+class Solution {
+    int findDepth(TreeNode* node, int& res) {
+        if(node == NULL) return -1;
+        int leftDepth = findDepth(node->left, res);
+        int rightDepth = findDepth(node->right, res);
+        res = max(res, leftDepth + rightDepth + 2);
+        return 1 + max(leftDepth, rightDepth);
+    }
+public:
+    int diameterOfBinaryTree(TreeNode* root) {
+        int res = 0;
+        findDepth(root, res);
+        return res;
+    }
+};
