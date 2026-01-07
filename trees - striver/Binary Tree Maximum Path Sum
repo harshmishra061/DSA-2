@@ -1,0 +1,15 @@
+class Solution {
+    int maxPathSum2(TreeNode* node, int& res) {
+        if(node == NULL) return 0;
+        int lSum = maxPathSum2(node->left, res);
+        int rSum = maxPathSum2(node->right, res);
+        res = max(res, node->val + max(lSum, 0) + max(rSum, 0));
+        return node->val + max({lSum, rSum, 0});
+    }
+public:
+    int maxPathSum(TreeNode* root) {
+        int res = root->val;
+        maxPathSum2(root, res); // max sum of path originating from given node
+        return res;
+    }
+};
