@@ -1,0 +1,34 @@
+class Solution {
+    void preorder(TreeNode* node, int col, int& minColVal, int& maxColVal) {
+        if(node == NULL) return;
+        minColVal = min(minColVal, col);
+        maxColVal = max(maxColVal, col);
+        preorder(node->left, col - 1, minColVal, maxColVal);
+        preorder(node->right, col + 1, minColVal, maxColVal);
+    }
+    void preorder(TreeNode* node, int row, int col, vector<vector<vector<int>>>& res) {
+        if(node == NULL) return;
+        if(res[col].size() < row + 1) res[col].resize(row + 1); 
+        res[col][row].push_back(node->val);
+        preorder(node->left, row + 1, col - 1, res);
+        preorder(node->right, row + 1, col + 1, res);
+    }
+public:
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        int minColVal = 0, maxColVal = 0;
+        preorder(root, 0, minColVal, maxColVal);
+        int sz = maxColVal - minColVal + 1;
+        vector<vector<vector<int>>> res(sz); // for a coln we can have multiple rows so assign values to [col][row]
+        preorder(root, 0, -minColVal, res);
+        vector<vector<int>> nres;
+        for(int c = 0;c < sz;c++) {
+            vector<int> tres;
+            for(int r = 0;r < res[c].size();r++) {
+                sort(res[c][r].begin(), res[c][r].end());
+                tres.insert(tres.end(), res[c][r].begin(), res[c][r].end());
+            }
+            nres.push_back(tres);
+        }
+        return nres;
+    }
+};
