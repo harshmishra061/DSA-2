@@ -37,3 +37,20 @@ class Solution {
         return res;
     }
 };
+
+// Best Code 
+class Solution {
+    void preorder(Node* node, int level, vector<int>& res) {
+        // Reverse Preorder Traversal Root->Right->Left
+        if(node == NULL) return;
+        if(res.size() == level) res.push_back(node->data);
+        preorder(node->right, level + 1, res);
+        preorder(node->left, level + 1, res);
+    }
+  public:
+    vector<int> rightView(Node *root) {
+        vector<int> res;
+        preorder(root, 0, res);
+        return res;
+    }
+};
