@@ -1,0 +1,20 @@
+void changeTree(BinaryTreeNode <int>* root) {
+    if(root == NULL || (root->left == NULL && root->right == NULL)) return;
+
+    int leftNodeData = root->left != NULL ? root->left->data : 0;
+    int rightNodeData = root->right != NULL ? root->right->data : 0;
+
+    if(leftNodeData + rightNodeData < root->data) {
+        if(root->left != NULL) root->left->data += root->data - (leftNodeData + rightNodeData);
+        else root->right->data += root->data - (leftNodeData + rightNodeData);
+    }
+
+    changeTree(root->left);
+    changeTree(root->right);
+
+    leftNodeData = root->left != NULL ? root->left->data : 0;
+    rightNodeData = root->right != NULL ? root->right->data : 0;
+
+    root->data = leftNodeData + rightNodeData;
+
+}  
