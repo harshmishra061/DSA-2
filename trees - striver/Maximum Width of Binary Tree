@@ -1,0 +1,32 @@
+class Solution {
+public:
+    int widthOfBinaryTree(TreeNode* root) {
+        queue<pair<TreeNode*, int>> q;
+        q.push({root, 1});
+        int res = 0;
+        while(!q.empty()) {
+            int sz = q.size();
+            res = max(res, q.back().second - q.front().second + 1);
+
+            int indexReducer = INT_MAX; // first node with left or right
+            
+            for(int i = 0;i < sz;i++) {
+                TreeNode* node = q.front().first;
+                int nodeNum = q.front().second; q.pop();
+                if(node->left != NULL) {
+                    indexReducer = min(indexReducer, nodeNum);
+                    q.push({node->left, 2 * (nodeNum - indexReducer)});
+
+                }
+                if(node->right != NULL) {
+                    indexReducer = min(indexReducer, nodeNum);
+                    q.push({node->right, 2 * (nodeNum - indexReducer) + 1});
+                }
+            }
+
+            
+        }
+
+        return res;
+    }
+};
