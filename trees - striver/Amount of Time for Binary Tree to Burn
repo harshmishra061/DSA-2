@@ -1,0 +1,53 @@
+class Solution {
+public:
+    int amountOfTime(TreeNode* root, int start) {
+        map<TreeNode*, TreeNode*> par;
+        par[root] = NULL;
+        TreeNode* target = NULL;
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()) {
+            TreeNode* node = q.front(); q.pop();
+            if(node->val == start) target = node;
+            if(node->left != NULL) {
+                par[node->left] = node;
+                q.push(node->left);
+            }
+            if(node->right != NULL) {
+                par[node->right] = node;
+                q.push(node->right);
+            }
+        } 
+
+        q = queue<TreeNode*>();
+        set<TreeNode*> vis;
+
+        q.push(target);
+        vis.insert(target);
+
+        int res = -1;
+
+        while(!q.empty()) {
+            res++;
+            int sz = q.size();
+            for(int i = 0;i < sz;i++) {
+                TreeNode* node = q.front(); q.pop();
+                if(node->left != NULL && vis.count(node->left) == 0) {
+                    vis.insert(node->left);
+                    q.push(node->left);
+                }
+                if(node->right != NULL && vis.count(node->right) == 0) {
+                    vis.insert(node->right);
+                    q.push(node->right);
+                }
+                if(par[node] != NULL && vis.count(par[node]) == 0) {
+                    vis.insert(par[node]);
+                    q.push(par[node]);
+                }
+            }
+        }
+
+        return res;
+
+    }
+};
