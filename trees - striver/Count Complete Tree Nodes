@@ -1,0 +1,78 @@
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        int h1 = 0, h2 = 0;
+        TreeNode* node = root;
+        while(node != NULL) {
+            h1++;
+            node = node->left;
+        }
+        node = root;
+        while(node != NULL) {
+            h2++;
+            node = node->right;
+        }
+
+        if(h1 == h2) return (1 << h1) - 1;
+
+        return 1 + countNodes(root->left) + countNodes(root->right);
+    }
+};
+
+
+// Solution 2
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if(root == NULL) return 0;
+        int height = 0;
+        TreeNode* node = root;
+        while(node != NULL) {
+            node = node->left;
+            height++;
+        }
+
+        int low = (1 << (height - 1));
+        int high = (1 << height) - 1;
+
+        int res = -1;
+
+        while(low <= high) {
+            int mid = low + (high - low) / 2;
+            vector<int> trav;
+            int val = mid;
+            while(val != 1) {
+                trav.push_back(val);
+                val = val/2;
+            }
+            reverse(trav.begin(), trav.end());
+            node = root;
+            int currval = 1, idx = 0;
+            while(currval != mid) {
+                if(trav[idx] == currval * 2) {
+                    node = node->left;
+                    currval *= 2;
+                } else {
+                    node = node->right;
+                    currval = currval * 2 + 1;
+                }
+                idx++;
+            }
+
+            cout << mid << " ";
+            if(node != NULL) {
+                cout << node->val << endl;
+            }
+
+            if(node != NULL) {
+                res = mid;
+                cout << "updated" << res << endl;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }  
+        } 
+
+        return res;
+    }
+};
