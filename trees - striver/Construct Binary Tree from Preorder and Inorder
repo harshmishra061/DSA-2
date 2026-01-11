@@ -1,0 +1,28 @@
+class Solution {
+    TreeNode* buildTree2(vector<int>& preorder, vector<int>& inorder, int preStart, int preEnd, int inStart, int inEnd) {
+        if(preStart > preEnd) return NULL;
+
+        int pos = inStart;
+        while(inorder[pos] != preorder[preStart]) pos++;
+
+        int leftLength = pos - inStart;
+
+        int leftPreStart = preStart + 1;
+        int leftPreEnd = preStart + leftLength;
+        int leftInStart = inStart;
+        int leftInEnd = pos - 1;
+        int rightPreStart = preStart + leftLength + 1;
+        int rightPreEnd = preEnd;
+        int rightInStart = pos + 1;
+        int rightInEnd = inEnd;
+
+        TreeNode* node = new TreeNode(preorder[preStart]);
+        node->left = buildTree2(preorder, inorder, leftPreStart, leftPreEnd, leftInStart, leftInEnd);
+        node->right = buildTree2(preorder, inorder, rightPreStart, rightPreEnd, rightInStart, rightInEnd);
+        return node;
+    }
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return buildTree2(preorder, inorder, 0, preorder.size() - 1, 0, preorder.size() - 1);
+    }
+};
