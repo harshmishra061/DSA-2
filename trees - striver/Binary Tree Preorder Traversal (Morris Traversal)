@@ -1,0 +1,27 @@
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        if(root == NULL) return {};
+        TreeNode* currNode = root;
+        vector<int> res;
+        while(currNode != NULL) {
+            if(currNode->left != NULL) {
+                TreeNode* lastNode = currNode->left; // last node of left subtree executed during preorder
+                while(lastNode->right != NULL && lastNode->right != currNode) lastNode = lastNode->right;
+                if(lastNode->right == NULL) {
+                    res.push_back(currNode->val); // currNode visited first time and left subtree is not yet visited
+                    lastNode->right = currNode;
+                    currNode = currNode->left;
+                } else {
+                    lastNode->right = NULL;
+                    currNode = currNode->right;
+                }
+            } else {
+                res.push_back(currNode->val);
+                currNode = currNode->right;
+            }
+        }
+
+        return res;
+    }
+};
