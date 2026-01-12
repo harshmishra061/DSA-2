@@ -1,0 +1,94 @@
+// BFS 
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        if(root == NULL) return "NULL ";
+        queue<TreeNode*> q;
+        q.push(root);
+        string res = to_string(root->val) + " ";
+
+        while(!q.empty()) {
+            TreeNode* node = q.front(); q.pop();
+            if(node->left != NULL) {
+                q.push(node->left);
+                res += to_string(node->left->val) + " ";
+            } else {
+                res += "NULL ";
+            }
+            if(node->right != NULL) {
+                q.push(node->right);
+                res += to_string(node->right->val) + " ";
+            } else {
+                res += "NULL ";
+            }
+        }
+
+        return res;
+
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        if(data == "NULL ") return NULL;
+        stringstream ss(data);
+        string str;
+        ss >> str;
+        TreeNode* root = new TreeNode(stoi(str));
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()) {
+            TreeNode* node = q.front(); q.pop();
+            ss >> str;
+            node->left = str != "NULL" ? new TreeNode(stoi(str)) : NULL;
+            ss >> str;
+            node->right = str != "NULL" ? new TreeNode(stoi(str)) : NULL;
+
+            if(node->left != NULL) {
+                q.push(node->left);
+            }
+            if(node->right != NULL) {
+                q.push(node->right);
+            }
+        }
+
+        return root;
+    }
+};
+
+
+
+
+// Recursive soln
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        if(root == NULL) return "NULL ";
+        string res = to_string(root->val) + " ";
+        string leftRes = serialize(root->left);
+        string rightRes = serialize(root->right);
+        return res + leftRes + rightRes;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        stringstream ss(data);
+        string str;
+        return deserialize2(ss, str);
+    }
+
+    TreeNode* deserialize2(stringstream& ss, string& str) {
+        if(ss >> str) {
+            cout << str << endl;
+            if(str == "NULL") return NULL;
+            TreeNode* node = new TreeNode(stoi(str));
+            node->left = deserialize2(ss, str);
+            node->right = deserialize2(ss, str);
+            return node;
+        }
+        return NULL;
+    }
+};
