@@ -1,0 +1,48 @@
+// C++
+class Solution {
+public:
+    TreeNode* deleteNode(TreeNode* root, int x) {
+        if(root == NULL) return NULL;
+        if(root->val == x) {
+            if(root->left == NULL) {
+                root = root->right;
+            } else if(root->right == NULL) {
+                root = root->left;  
+            } else {
+                // so i will make the left child node as new node
+                TreeNode* lastNode = root->left; // left subtree right most node
+                while(lastNode->right != NULL) lastNode = lastNode->right;
+                lastNode->right = root->right; // attach right subtree to left's rightmost node
+                root = root->left;
+            }
+        } else if(x < root->val) {
+            root->left = deleteNode(root->left, x);
+        } else {
+            root->right = deleteNode(root->right, x);
+        }
+        
+        return root;
+    }
+};
+
+// JAVA
+class Solution {
+    public TreeNode deleteNode(TreeNode root, int x) {
+        if(root == null) return null;
+        if(root.val == x) {
+            if(root.left == null) root = root.right;
+            else if(root.right == null) root = root.left;
+            else {
+                TreeNode lastNode = root.left;
+                while(lastNode.right != null) lastNode = lastNode.right;
+                lastNode.right = root.right;
+                root = root.left;
+            }
+        } else if(x < root.val) {
+            root.left = deleteNode(root.left, x);
+        } else {
+            root.right = deleteNode(root.right, x);
+        }
+        return root;
+    }
+}
