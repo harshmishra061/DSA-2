@@ -1,0 +1,14 @@
+class Solution {
+    TreeNode* bstFromPreorder(vector<int>& preorder, int& idx, int max_allowed_number) {
+        if(idx == preorder.size() || preorder[idx] >= max_allowed_number) return NULL;
+        TreeNode* node = new TreeNode(preorder[idx++]);
+        node->left = bstFromPreorder(preorder, idx, node->val);
+        node->right = bstFromPreorder(preorder, idx, max_allowed_number);
+        return node;
+    }
+public:
+    TreeNode* bstFromPreorder(vector<int>& preorder) {
+        int idx = 0;
+        return bstFromPreorder(preorder, idx, INT_MAX);
+    }
+};
