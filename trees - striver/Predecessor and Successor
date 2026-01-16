@@ -1,0 +1,37 @@
+class Solution {
+    Node* findSuccessor(Node* node, int key) {
+        Node* res = NULL;
+        while(node != NULL) {
+            if(node->data == key) {
+                node = node->right;
+            } else if(node->data < key) {
+                node = node->right;
+            } else {
+                res = node;
+                node = node->left;
+            }
+        }
+        return res;
+    }
+    
+    Node* findPredecessor(Node* node, int key) {
+        Node* res = NULL;
+        while(node != NULL) {
+            if(node->data == key) {
+                node = node->left;
+            } else if(node->data < key) {
+                res = node;
+                node = node->right;
+            } else {
+                node = node->left;
+            }
+        }
+        return res;
+    }
+  public:
+    vector<Node*> findPreSuc(Node* root, int key) {
+        Node* successor = findSuccessor(root, key);
+        Node* predecessor = findPredecessor(root, key);
+        return {predecessor, successor};
+    }
+};
