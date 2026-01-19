@@ -1,0 +1,19 @@
+class Solution {
+    void dfs2(int node, vector<vector<int>>& adj, vector<bool>& vis, vector<int>& res) {
+        vis[node] = true;
+        res.push_back(node);
+        
+        for(auto nbr : adj[node]) {
+            if(!vis[nbr]) dfs2(nbr, adj, vis, res);
+        }
+    } 
+  public:
+    vector<int> dfs(vector<vector<int>>& adj) {
+        vector<int> res;
+        vector<bool> vis(adj.size(), false);
+        
+        dfs2(0, adj, vis, res);
+        
+        return res;
+    }
+};
