@@ -1,0 +1,23 @@
+class Solution {
+    void dfs(int node, vector<bool>& vis, vector<vector<int>>& adj) {
+        vis[node] = true;
+        for(int i = 0;i < adj.size();i++) {
+            if(adj[node][i] == 1 && !vis[i]) {
+                dfs(i, vis, adj);
+            }
+        }
+    }
+  public:
+    int numProvinces(vector<vector<int>> adj, int V) {
+        int res = 0;
+        vector<bool> vis(adj.size(), false);
+        for(int i = 0;i < adj.size();i++) {
+            if(!vis[i]) {
+                res++;
+                dfs(i, vis, adj);
+            }
+        }
+        
+        return res;
+    }
+};
