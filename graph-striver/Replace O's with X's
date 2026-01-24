@@ -1,0 +1,79 @@
+// using vis array
+class Solution {
+    vector<int> dir;
+    void dfs(int i, int j, vector<vector<char>>& grid, vector<vector<bool>>& vis) {
+        vis[i][j] = true;
+        
+        for(int k = 0;k < 4;k++) {
+            int newi = i + dir[k];
+            int newj = j + dir[k + 1];
+            
+            if(newi >= 0 && newi < grid.size() && newj >= 0 && newj < grid[0].size() && grid[newi][newj] == 'O' && vis[newi][newj] == false) {
+                dfs(newi, newj, grid, vis);
+            }
+        }
+        
+    }
+  public:
+    void fill(vector<vector<char>>& grid) {
+        dir = {0, -1, 0, 1, 0};
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+        
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if((i == 0 || j == 0 || i == n - 1 || j == m - 1) && grid[i][j] == 'O') {
+                    dfs(i, j, grid, vis);
+                }
+            }
+        }
+        
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                grid[i][j] = vis[i][j] ? 'O' : 'X';
+            }
+        }
+        
+    }
+};
+
+// Without vis array
+class Solution {
+    vector<int> dir;
+    void dfs(int i, int j, vector<vector<char>>& grid) {
+        grid[i][j] = 'A';
+        
+        for(int k = 0;k < 4;k++) {
+            int newi = i + dir[k];
+            int newj = j + dir[k + 1];
+            
+            if(newi >= 0 && newi < grid.size() && newj >= 0 && newj < grid[0].size() && grid[newi][newj] == 'O') {
+                dfs(newi, newj, grid);
+            }
+        }
+        
+    }
+  public:
+    void fill(vector<vector<char>>& grid) {
+        dir = {0, -1, 0, 1, 0};
+        int n = grid.size();
+        int m = grid[0].size();
+        
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if((i == 0 || j == 0 || i == n - 1 || j == m - 1) && grid[i][j] == 'O') {
+                    dfs(i, j, grid);
+                }
+            }
+        }
+        
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if(grid[i][j] == 'O') grid[i][j] = 'X';
+                else if(grid[i][j] == 'A') grid[i][j] = 'O';
+            }
+        }
+        
+    }
+};
