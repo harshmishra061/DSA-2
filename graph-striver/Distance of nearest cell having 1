@@ -2,7 +2,7 @@ class Solution {
   public:
     vector<vector<int>> nearest(vector<vector<int>>& grid) {
         int n = grid.size(), m = grid[0].size();
-        vector<vector<int>> res(n, vector<int>(m, INT_MAX));
+        vector<vector<int>> res(n, vector<int>(m, -1));
         
         queue<pair<int, int>> q;
         for(int i = 0;i < n;i++) {
@@ -24,7 +24,7 @@ class Solution {
                 int newi = i + dir[k];
                 int newj = j + dir[k + 1];
                 
-                if(newi >= 0 && newi < n && newj >= 0 && newj < m && res[i][j] + 1 < res[newi][newj]) {
+                if(newi >= 0 && newi < n && newj >= 0 && newj < m && res[newi][newj] == -1) { // In BFS nearest always touch the new node
                     res[newi][newj] = res[i][j] + 1;
                     q.push({newi, newj});
                 }
