@@ -1,0 +1,61 @@
+// User function Template for C++
+
+class Direction {
+    public:
+        int deltai;
+        int deltaj;
+        char path;
+        char rpath;
+        
+        Direction(int deltai, int deltaj, char path, char rpath) {
+            this->deltai = deltai;
+            this->deltaj = deltaj;
+            this->path = path;
+            this->rpath = rpath;
+        }
+};
+
+class Solution {
+    
+    vector<Direction> dir;
+    
+    void dfs(int i, int j, vector<vector<int>>& grid, vector<vector<bool>>& vis, string& path) {
+        vis[i][j] = true;
+        
+        for(auto d : dir) {
+            int newi = i + d.deltai;
+            int newj = j + d.deltaj;
+            
+            if(newi >= 0 && newi < grid.size() && newj >= 0 && newj < grid[0].size() && grid[newi][newj] == 1 && vis[newi][newj] == false) {
+                path += d.path;
+                dfs(newi, newj, grid, vis, path);
+                path += d.rpath;
+            }
+        }
+    }
+  public:
+    int countDistinctIslands(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+        set<string> res;
+        
+        dir.push_back(Direction(-1, 0, 'U', 'D'));
+        dir.push_back(Direction(1, 0, 'D', 'U'));
+        dir.push_back(Direction(0, -1, 'L', 'R'));
+        dir.push_back(Direction(0, 1, 'R', 'L'));
+        
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if(grid[i][j] == 1 && vis[i][j] == false) {
+                    string path = "";
+                    dfs(i, j, grid, vis, path);
+                    res.insert(path);
+                }
+            }
+        }
+        
+        return res.size();
+    }
+};
