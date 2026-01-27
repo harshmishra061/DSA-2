@@ -1,3 +1,36 @@
+// Using BFS - Topo Sort
+class Solution {
+  public:
+    bool isCyclic(int n, vector<vector<int>> &edges) {
+        vector<vector<int>> adj(n);
+        vector<int> indegree(n, 0);
+        
+        for(auto edge : edges) {
+            adj[edge[0]].push_back(edge[1]);
+            indegree[edge[1]]++;
+        }
+        
+        queue<int> q;
+        for(int i = 0;i < n;i++) {
+            if(indegree[i] == 0) q.push(i);
+        }
+        
+        vector<int> res;
+        while(!q.empty()) {
+            int node = q.front(); q.pop();
+            res.push_back(node);
+            for(auto nbr : adj[node]) {
+                indegree[nbr]--;
+                if(indegree[nbr] == 0) q.push(nbr);
+            }
+        }
+        
+        return res.size() != n;
+        
+    }
+};
+
+// DFS
 class Solution {
     bool checkCycle(int node, vector<vector<int>>& adj, vector<bool>& active, vector<bool>& vis) {
         active[node] = true;
@@ -32,7 +65,7 @@ class Solution {
     }
 };
 
-// Using only visited
+// Using only visited - DFS
 class Solution {
     bool checkCycle(int node, vector<vector<int>>& adj, vector<int>& vis) {
         vis[node] = 1; // active
