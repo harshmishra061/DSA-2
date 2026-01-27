@@ -1,32 +1,99 @@
+// Using DFS and Stack
 class Solution {
-  public:
-    vector<int> safeNodes(int V, vector<vector<int>>& edges) {
-        vector<vector<int>> adj(V);
-        vector<int> indegree(V, 0);
-        for(auto edge : edges) {
-            adj[edge[1]].push_back(edge[0]);
-            indegree[edge[0]]++;
-        }
+    void dfs(int node, vector<vector<int>>& adj, vector<bool>& vis, stack<int>& st) {
+        vis[node] = true;
         
-        queue<int> q;
-        vector<int> res;
-        
-        for(int i = 0;i < V;i++) {
-            if(indegree[i] == 0) {
-                q.push(i);
-                res.push_back(i);
+        for(auto nbr : adj[node]) {
+            if(!vis[nbr]) {
+                dfs(nbr, adj, vis, st);
             }
         }
         
+        st.push(node);
+    }
+  public:
+    vector<int> topoSort(int n, vector<vector<int>>& edges) {
+        vector<vector<int>> adj(n);
+        for(auto edge : edges) {
+            adj[edge[0]].push_back(edge[1]);
+        }
+        
+        vector<bool> vis(n, false);
+        stack<int> st;
+        
+        for(int i = 0;i < n;i++) {
+            if(!vis[i]) {
+                dfs(i, adj, vis, st);
+            }
+        }
+        
+        vector<int> res;
+        while(!st.empty()) {
+            res.push_back(st.top()); st.pop();
+        }
+        
+        return res;
+    }
+};
+
+// Using DFS and reversed Adj List
+class Solution {
+    void dfs(int node, vector<vector<int>>& adj, vector<bool>& vis, vector<int>& res) {
+        vis[node] = true;
+        
+        for(auto nbr : adj[node]) {
+            if(!vis[nbr]) {
+                dfs(nbr, adj, vis, res);
+            }
+        }
+        
+        res.push_back(node);
+    }
+  public:
+    vector<int> topoSort(int n, vector<vector<int>>& edges) {
+        vector<vector<int>> radj(n);
+        for(auto edge : edges) {
+            radj[edge[1]].push_back(edge[0]); // reversed adj list
+        }
+        
+        vector<bool> vis(n, false);
+        vector<int> topo_sort;
+        
+        for(int i = 0;i < n;i++) {
+            if(!vis[i]) {
+                dfs(i, radj, vis, topo_sort);
+            }
+        }
+        
+        return topo_sort;
+    }
+};
+
+// Topo Sort - Kahn's Algo
+class Solution {
+  public:
+    vector<int> topoSort(int V, vector<vector<int>>& edges) {
+        vector<int> indegree(V, 0);
+        vector<vector<int>> adj(V);
+        for(auto edge : edges) {
+            adj[edge[0]].push_back(edge[1]);
+            indegree[edge[1]]++;
+        }
+        
+        queue<int> q;
+        for(int i = 0;i < V;i++) {
+            if(indegree[i] == 0) q.push(i);
+        }
+        
+        vector<int> res;
+        
         while(!q.empty()) {
             int node = q.front(); q.pop();
+            res.push_back(node);
             
             for(auto nbr : adj[node]) {
                 indegree[nbr]--;
-                if(indegree[nbr] == 0) {
-                    q.push(nbr);
-                    res.push_back(nbr);
-                }
+                if(indegree[nbr] == 0) q.push(nbr);
             }
         }
         
