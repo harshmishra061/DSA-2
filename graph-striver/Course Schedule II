@@ -32,3 +32,44 @@ public:
         return {};
     }
 };
+
+// Using DFS & Stack
+class Solution {
+    bool checkCycle(int node, vector<vector<int>>& adj, vector<int>& vis, stack<int>& st) {
+        vis[node] = 1; // active
+        for(auto nbr : adj[node]) {
+            if(!vis[nbr]) {
+                if(checkCycle(nbr, adj, vis, st) == true) return true;
+            } else if(vis[nbr] == 1) {
+                return true;
+            }
+        }
+
+        st.push(node);
+        vis[node] = 2;
+        return false;
+    }
+public:
+    vector<int> findOrder(int n, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> adj(n);
+        for(auto it : prerequisites) {
+            adj[it[1]].push_back(it[0]);
+        }
+
+        stack<int> st; // To store the res in reversed order
+        vector<int> vis(n, 0);
+
+        for(int i = 0;i < n;i++) {
+            if(!vis[i]) {
+                if(checkCycle(i, adj, vis, st) == true) return {};
+            }
+        }
+
+        vector<int> res;
+        while(!st.empty()) {
+            res.push_back(st.top()); st.pop();
+        }
+
+        return res;
+    }
+};
