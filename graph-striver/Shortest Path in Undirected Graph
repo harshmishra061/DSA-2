@@ -1,0 +1,33 @@
+// BFS
+class Solution {
+  public:
+    vector<int> shortestPath(int n, vector<vector<int>> &edges, int src) {
+        vector<vector<int>> adj(n);
+        for(auto edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        
+        queue<int> q;
+        vector<int> res(n, INT_MAX);
+        q.push(src);
+        res[src] = 0;
+        
+        while(!q.empty()) {
+            int node = q.front(); q.pop();
+            for(auto nbr : adj[node]) {
+                if(res[nbr] == INT_MAX) { // if visiting first time
+                    res[nbr] = res[node] + 1;
+                    q.push(nbr);
+                }
+            }
+        }
+        
+        for(auto& it : res) if(it == INT_MAX) it = -1;
+        
+        return res;
+        
+    }
+};
