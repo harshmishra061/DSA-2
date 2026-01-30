@@ -1,0 +1,51 @@
+class Solution {
+  public:
+    vector<int> shortestPath(int n, int m, vector<vector<int>>& edges) {
+        // Dijkastra with Parent Map
+        vector<vector<pair<int, int>>> adj(n + 1);
+        for(auto edge : edges) {
+            int u = edge[0], v = edge[1], w = edge[2];
+            adj[u].push_back({v, w});
+            adj[v].push_back({u, w});
+        }
+        
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+        vector<int> dis(n + 1, INT_MAX), par(n + 1, -1);
+        
+        pq.push({0, 1}); // node 1 with weight 0
+        dis[1] = 0;
+        
+        while(!pq.empty()) {
+            int node = pq.top().second;
+            int disFromSourceToNode = pq.top().first; pq.pop();
+            
+            if(disFromSourceToNode != dis[node]) continue;
+            
+            for(auto it : adj[node]) {
+                int nbr = it.first;
+                int disFromNodeToNbr = it.second;
+                
+                if(disFromSourceToNode + disFromNodeToNbr < dis[nbr]) {
+                    dis[nbr] = disFromSourceToNode + disFromNodeToNbr;
+                    par[nbr] = node;
+                    pq.push({dis[nbr], nbr});
+                }
+            }
+        }
+        
+        if(dis[n] == INT_MAX) return {-1};
+        
+        vector<int> res;
+        
+        int itr = n;
+        while(itr != -1) {
+            res.push_back(itr);
+            itr = par[itr];
+        }
+        res.push_back(dis[n]);
+        reverse(res.begin(), res.end());
+        return res;
+        
+        
+    }
+};
