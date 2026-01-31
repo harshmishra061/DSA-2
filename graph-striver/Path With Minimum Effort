@@ -1,0 +1,38 @@
+class Solution {
+  public:
+    int minCostPath(vector<vector<int>>& mat) {
+        int n = mat.size(), m = mat[0].size();
+        vector<int> dir = {1, 0, -1, 0, 1};
+        vector<vector<int>> pathCost(n, vector<int>(m, INT_MAX));
+        
+        priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, 
+        greater<pair<int, pair<int, int>>>> pq;
+        
+        pq.push({0, {0, 0}});
+        pathCost[0][0] = 0;
+        
+        while(!pq.empty()) {
+            int pathCostTillNode = pq.top().first;
+            int i = pq.top().second.first;
+            int j = pq.top().second.second;
+            pq.pop();
+            
+            if(i == n - 1 && j == m - 1) return pathCost[i][j];
+            
+            if(pathCost[i][j] != pathCostTillNode) continue;
+            
+            for(int k = 0;k < 4;k++) {
+                int newi = i + dir[k];
+                int newj = j + dir[k + 1];
+                if(newi >= 0 && newi < n && newj >= 0 && newj < m) {
+                    int newPathCostTillNbrNode = max(pathCostTillNode, abs(mat[i][j] - mat[newi][newj]));
+                    if(newPathCostTillNbrNode < pathCost[newi][newj]) {
+                        pathCost[newi][newj] = newPathCostTillNbrNode;
+                        pq.push({newPathCostTillNbrNode, {newi, newj}});
+                    }
+                    
+                }
+            }
+        }
+    }
+};
