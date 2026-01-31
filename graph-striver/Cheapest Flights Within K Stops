@@ -1,0 +1,36 @@
+class Solution {
+  public:
+    int CheapestFLight(int n, vector<vector<int>>& flights, int src, int dst, int K) {
+        vector<vector<pair<int, int>>> adj(n);
+        for(auto it : flights) {
+            adj[it[0]].push_back({it[1], it[2]});
+        }
+        
+        vector<int> chipestPrice(n, INT_MAX);
+        queue<int> q;
+        q.push(src);
+        chipestPrice[src] = 0;
+        
+        int noOfItrs = K + 1;
+        
+        while(!q.empty() && noOfItrs) {
+            noOfItrs--;
+            int sz = q.size();
+            vector<int> newChipestPrice = chipestPrice;
+            while(sz--) {
+                int node = q.front(); q.pop();
+                for(auto it : adj[node]) {
+                    int nbr = it.first;
+                    int costToReachNbr = it.second;
+                    if(chipestPrice[node] + costToReachNbr < newChipestPrice[nbr]) {
+                        newChipestPrice[nbr] = chipestPrice[node] + costToReachNbr;
+                        q.push(nbr);
+                    }
+                }
+            }
+            chipestPrice = newChipestPrice;
+        }
+        
+        return chipestPrice[dst] != INT_MAX ? chipestPrice[dst] : -1;
+    }
+};
