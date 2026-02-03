@@ -1,0 +1,65 @@
+// dfs
+class Solution {
+    void dfs(int node, vector<vector<int>>& adj, vector<bool>& vis) {
+        vis[node] = true;
+        for(auto nbr : adj[node]) {
+            if(!vis[nbr]) {
+                dfs(nbr, adj, vis);
+            }
+        }
+    }
+public:
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        if(connections.size() < n - 1) return -1;
+        // find the number of components => count
+        // min number of changes required to make all computers connected = count - 1
+        vector<vector<int>> adj(n);
+        for(auto edge : connections) {
+            adj[edge[0]].push_back(edge[1]);
+            adj[edge[1]].push_back(edge[0]);
+        }
+        int countComponents = 0;
+        vector<bool> vis(n, false);
+        for(int i = 0;i < n;i++) {
+            if(!vis[i]) {
+                countComponents++;
+                dfs(i, adj, vis);
+            }
+        }
+
+        return countComponents - 1;
+    }
+};
+
+// disjoint set union
+class Solution {
+    int findPar(int x, vector<int>& par) {
+        if(x == par[x]) return x;
+        return par[x] = findPar(par[x], par);
+    }
+
+    void merge(int x, int y, vector<int>& par) {
+        x = findPar(x, par);
+        y = findPar(y, par);
+
+        if(x != y) {
+            par[x] = y;
+        }
+    }
+public:
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        if(connections.size() < n - 1) return -1;
+        vector<int> par(n);
+        for(int i = 0;i < n;i++) par[i] = i;
+        for(auto edge : connections) {
+            merge(edge[0], edge[1], par);
+        }
+
+        int count = 0;
+        for(int i = 0;i < n;i++) {
+            if(par[i] == i) count++;
+        }
+
+        return count - 1;
+    }
+};
