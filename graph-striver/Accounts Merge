@@ -1,0 +1,99 @@
+class Solution {
+    int findPar(int x, vector<int>& par) {
+        if(x == par[x]) return x;
+        return par[x] = findPar(par[x], par);
+    }
+
+    void merge(int x, int y, vector<int>& par) {
+        x = findPar(x, par);
+        y = findPar(y, par);
+
+        par[x] = y;
+    }
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        int n = accounts.size();
+        vector<int> par(n);
+        map<string, int> accountNoOf;
+        for(int i = 0;i < n;i++) par[i] = i;
+
+        for(int i = 0;i < n;i++) {
+            for(int j = 1;j < accounts[i].size();j++) {
+                if(accountNoOf.find(accounts[i][j]) == accountNoOf.end()) { // email occuring first time
+                    accountNoOf[accounts[i][j]] = i;
+                } else { // previously occured somewhere
+                    merge(i, accountNoOf[accounts[i][j]], par);
+                }
+            }
+        }
+
+        map<int, vector<string>> mergedAccount; // account -> email
+        for(auto it : accountNoOf) {
+            int accNo = findPar(it.second, par);
+            mergedAccount[accNo].push_back(it.first);
+        }
+
+        vector<vector<string>> res;
+        for(auto it : mergedAccount) {
+            vector<string> vec;
+            vec.push_back(accounts[it.first][0]); // Name
+            for(auto email : it.second) vec.push_back(email); // All Emails
+            res.push_back(vec);
+        }
+
+        return res;
+    }
+};
+
+
+
+// Below implementation just merge emails and keep an email to name mapping and once done create the ans from it
+class Solution {
+    string findPar(string x, map<string, string>& par) {
+        if(x == par[x]) return x;
+        return par[x] = findPar(par[x], par);
+    }
+
+    void merge(string x, string y, map<string, string>& par) {
+        x = findPar(x, par);
+        y = findPar(y, par);
+
+        par[x] = y;
+    }
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        int n = accounts.size();
+        map<string, string> nameOf;
+        map<string, string> par;
+
+        for(int i = 0;i < n;i++) {
+            nameOf[accounts[i][1]] = accounts[i][0];
+            if(par.find(accounts[i][1]) == par.end()) par[accounts[i][1]] = accounts[i][1];
+            for(int j = 2;j < accounts[i].size();j++) {
+                nameOf[accounts[i][j]] = accounts[i][0];
+                if(par.find(accounts[i][j]) == par.end()) par[accounts[i][j]] = accounts[i][j];
+                merge(accounts[i][j - 1], accounts[i][j], par);
+            }
+        }
+
+        map<string, vector<string>> mergedEmail;
+        for(auto it : par) {
+            string parEmail = findPar(it.first, par);
+            mergedEmail[parEmail].push_back(it.first);
+        }
+
+        vector<vector<string>> res;
+
+        for(auto it : mergedEmail) {
+            vector<string> vec;
+            vec.push_back(nameOf[it.first]);
+            for(auto email : it.second) {
+                vec.push_back(email);
+            }
+
+            res.push_back(vec);
+        }
+
+        return res;
+    }
+};
