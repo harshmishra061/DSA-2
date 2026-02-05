@@ -1,0 +1,55 @@
+// User function Template for C++
+class Solution {
+    int findPar(int x, map<int, int>& par) {
+        if(x == par[x]) return x;
+        return par[x] = findPar(par[x], par);
+    }
+    
+    void merge(int x, int y, map<int, int>& par) {
+        x = findPar(x, par);
+        y = findPar(y, par);
+        
+        par[x] = y;
+    }
+  public:
+    vector<int> numOfIslands(int n, int m, vector<vector<int>> &operators) {
+        int currentIslands = 0;
+        map<int, int> par;
+        
+        vector<int> dir = {0, 1, 0, -1, 0};
+        vector<int> res;
+        
+        for(auto op : operators) {
+            int i = op[0], j = op[1];
+            
+            int idx = i * m + j;
+            
+            if(par.find(idx) != par.end()) {
+                res.push_back(currentIslands);
+                continue;
+            }
+            
+            par[idx] = idx;
+            
+            currentIslands++;
+            
+            for(int k = 0;k < 4;k++) {
+                int newi = i + dir[k];
+                int newj = j + dir[k + 1];
+                int newIdx = newi * m + newj;
+                
+                if(newi >= 0 && newi < n && newj >= 0 && newj < m && par.find(newIdx) != par.end() && findPar(idx, par) != findPar(newIdx, par)) {
+                    currentIslands--;
+                    merge(idx, newIdx, par);
+                }
+            }
+            
+            res.push_back(currentIslands);
+            
+        }
+        
+        return res;
+    }
+};
+
+
