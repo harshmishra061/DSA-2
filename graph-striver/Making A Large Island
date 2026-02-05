@@ -1,0 +1,150 @@
+class Solution {
+    int findPar(int x, map<int, int>& par) {
+        if(x == par[x]) return x;
+        return par[x] = findPar(par[x], par);
+    }
+
+    void merge(int x, int y, map<int, int>& par, map<int, int>& count) {
+        x = findPar(x, par);
+        y = findPar(y, par);
+        if(x != y) {
+            par[x] = y;
+            count[y] += count[x];
+        }
+    }
+public:
+    int largestIsland(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        map<int, int> par; 
+        map<int, int> count; // count -> how many nodes connected with a given node - mainly help par
+
+        vector<int> dir = {-1, 0, -1};
+
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if(grid[i][j] == 0) {
+                    continue;
+                }
+                int idx = i * m + j;
+                
+                par[idx] = idx;
+                count[idx] = 1;
+
+                for(int k = 0;k < 2;k++) { // go to top and left and we are iterating from top left to bottom right
+                    int newi = i + dir[k];
+                    int newj = j + dir[k + 1];
+
+                    if(newi >= 0 && newi < n && newj >= 0 && newj < m && grid[newi][newj] == 1) {
+                        int newIdx = newi * m + newj;
+                        merge(idx, newIdx, par, count);
+                    }
+                }
+
+            }
+        }
+
+        int res = 0;
+        vector<int> dir2 = {-1, 0, 1, 0, -1};
+
+        for(int i = 0;i < n;i++) {
+            for(int j = 0;j < m;j++) {
+                if(grid[i][j] == 0) {
+                    int tres = 1;
+                    set<int> alreadyTakenPar;
+                    for(int k = 0;k < 4;k++) {
+                        int newi = i + dir2[k];
+                        int newj = j + dir2[k + 1];
+
+                        if(newi >= 0 && newi < n && newj >= 0 && newj < m && grid[newi][newj] == 1) {
+                            int p = findPar(newi * m + newj, par);
+                            if(alreadyTakenPar.count(p) == 0) {
+                                alreadyTakenPar.insert(p);
+                                tres += count[p];
+                            }
+                        }
+                    }
+
+                    res = max(res, tres);
+                } else {
+                    int node = findPar(i * m + j, par);
+                    res = max(res, count[node]);
+                }
+            }
+        }
+
+        return res;
+    }
+};
+
+// Can be solved using DFS as well - for each group of nodes mark a single parent and store count there
+class Solution {
+    void dfs(int i, int j, int pi, int pj, vector<vector<bool>>& vis,
+             vector<vector<int>>& grid, map<int, int>& par,
+             map<int, int>& count, vector<int>& dir) {
+        vis[i][j] = true;
+        par[i * grid.size() + j] = pi * grid.size() + pj;
+        count[pi * grid.size() + pj]++;
+
+        for (int k = 0; k < 4; k++) {
+            int newi = i + dir[k];
+            int newj = j + dir[k + 1];
+            if (newi >= 0 && newi < grid.size() && newj >= 0 &&
+                newj < grid.size() && grid[newi][newj] == 1 &&
+                vis[newi][newj] == false) {
+                dfs(newi, newj, pi, pj, vis, grid, par, count, dir);
+            }
+        }
+    }
+
+public:
+    int largestIsland(vector<vector<int>>& grid) {
+        int n = grid.size();
+
+        map<int, int> par;
+        map<int, int> count; // count -> how many nodes connected with a given
+                             // node - mainly help par
+        vector<int> dir = {-1, 0, 1, 0, -1};
+        vector<vector<bool>> vis(n, vector<bool>(n, false));
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!vis[i][j] && grid[i][j] == 1) {
+                    dfs(i, j, i, j, vis, grid, par, count, dir);
+                }
+            }
+        }
+
+        int res = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 0) {
+                    int tres = 1;
+                    set<int> alreadyTakenPar;
+                    for (int k = 0; k < 4; k++) {
+                        int newi = i + dir[k];
+                        int newj = j + dir[k + 1];
+
+                        if (newi >= 0 && newi < n && newj >= 0 && newj < n &&
+                            grid[newi][newj] == 1) {
+                            int p = par[newi * n + newj];
+                            if (alreadyTakenPar.count(p) == 0) {
+                                alreadyTakenPar.insert(p);
+                                tres += count[p];
+                            }
+                        }
+                    }
+
+                    res = max(res, tres);
+                } else {
+                    int node = par[i * n + j];
+                    res = max(res, count[node]);
+                }
+            }
+        }
+
+        return res;
+    }
+};
