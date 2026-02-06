@@ -1,0 +1,57 @@
+// Run DFS
+// Store nodes in stack while coming back (based on finishing time)
+// Reverse Edges
+// Run DFS by taking out nodes from stack
+class Solution {
+    void dfs(int node, vector<vector<int>>& adj, vector<bool>& vis, stack<int>& st) {
+        vis[node] = true;
+        
+        for(auto nbr : adj[node]) {
+            if(!vis[nbr]) {
+                dfs(nbr, adj, vis, st);
+            }
+        }
+        
+        st.push(node);
+    }
+    
+    void dfs2(int node, vector<vector<int>>& adj, vector<bool>& vis) {
+        vis[node] = true;
+        
+        for(auto nbr : adj[node]) {
+            if(!vis[nbr]) {
+                dfs2(nbr, adj, vis);
+            }
+        }
+    }
+  public:
+    int kosaraju(vector<vector<int>> &adj) {
+        int n = adj.size();
+        stack<int> st;
+        vector<bool> vis(n, false);
+        for(int i = 0;i < n;i++) {
+            if(!vis[i]) {
+                dfs(i, adj, vis, st);
+            }
+        }
+        vector<vector<int>> radj(n);
+        for(int i = 0;i < n;i++) {
+            for(auto nbr : adj[i]) {
+                radj[nbr].push_back(i);
+            }
+        }
+        
+        int res = 0;
+        vis = vector<bool>(n, false);
+        while(!st.empty()) {
+            int node = st.top(); st.pop();
+            if(!vis[node]) {
+                res++;
+                dfs2(node, radj, vis);
+            }
+        }
+        
+        return res;
+        
+    }
+};
