@@ -1,0 +1,40 @@
+// User function Template for C++
+
+class Solution {
+    void dfs(int node, int par, vector<int> adj[], vector<int>& disc, vector<int>& low, int& t, set<int>& s) {
+        t++;
+        disc[node] = low[node] = t;
+        int dfsCalls = 0;
+
+        for(auto nbr : adj[node]) {
+            if(nbr == par) continue;
+            if(disc[nbr] == -1) {
+                dfsCalls++;
+                dfs(nbr, node, adj, disc, low, t, s);
+                low[node] = min(low[node], low[nbr]);
+                if(disc[node] <= low[nbr] && node != 0) {
+                    s.insert(node);
+                }
+            } else {
+                low[node] = min(low[node], disc[nbr]);
+            }
+        }
+        
+        if(node == 0 && dfsCalls > 1) s.insert(0);
+    }
+  public:
+    vector<int> articulationPoints(int n, vector<int> adj[]) {
+        vector<int> disc(n, -1), low(n, -1);
+
+        int time = 0;
+        set<int> s;
+
+        dfs(0, -1, adj, disc, low, time, s);
+
+        vector<int> res(s.begin(), s.end());
+        
+        if(res.size()) return res;
+        return {-1};
+        
+    }
+};
