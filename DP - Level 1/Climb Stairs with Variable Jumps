@@ -1,3 +1,22 @@
+// Recursive
+class Solution {
+    int climbStairsVariableJumps2(int curr, int& n, vector<int>& arr) {
+        if(curr > n) return 0;
+        if(curr == n) return 1;
+        
+        int countWays = 0;
+        for(int j = 1; j <= arr[curr]; j++) {
+            countWays += climbStairsVariableJumps2(curr + j, n, arr);
+        }
+        return countWays;
+    }
+public:
+    int climbStairsVariableJumps(int n, vector<int>& arr) {
+        return climbStairsVariableJumps2(0, n, arr);
+    }
+};
+
+// Tabulation
 class Solution {
 public:
     int climbStairsVariableJumps(int n, vector<int>& arr) {
