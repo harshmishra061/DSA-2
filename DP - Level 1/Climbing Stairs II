@@ -1,0 +1,74 @@
+// calculating from 0th step to nth step
+class Solution {
+    int climbStairs2(int curr, int& n, vector<int>& costs, vector<int>& dp) {
+        if(curr == n) return 0;
+        if(dp[curr] != -1) return dp[curr];
+
+        int minCost = INT_MAX;
+
+        if(curr + 1 <= n) {
+            minCost = min(minCost, 1 + costs[curr] + climbStairs2(curr + 1, n, costs, dp)); //return the minimum cost to reach from curr + 1 to nth step
+        }
+        if(curr + 2 <= n) {
+            minCost = min(minCost, 4 + costs[curr + 1] + climbStairs2(curr + 2, n, costs, dp)); //return the minimum cost to reach from curr + 2 to nth step
+        }
+        if(curr + 3 <= n) {
+            minCost = min(minCost, 9 + costs[curr + 2] + climbStairs2(curr + 3, n, costs, dp)); //return the minimum cost to reach from curr + 3 to nth step
+        }
+        return dp[curr] = minCost;
+    }
+public:
+    int climbStairs(int n, vector<int>& costs) {
+        vector<int> dp(n, -1);
+        return climbStairs2(0, n, costs, dp); // return the minimum cost to reach from 0 to nth step
+    }
+};
+
+// calculating from nth step to 0th step
+class Solution {
+    int climbStairs2(int curr, vector<int>& costs, vector<int>& dp) {
+        if(curr == 0) return 0;
+        if(dp[curr] != -1) return dp[curr];
+
+        int minCost = INT_MAX;
+        if(curr - 1 >= 0) {
+            minCost = min(minCost, 1 + costs[curr - 1] + climbStairs2(curr - 1, costs, dp)); // returns the minimum cost to reach from (curr - 1)th step to 0
+        }
+        if(curr - 2 >= 0) {
+            minCost = min(minCost, 4 + costs[curr - 1] + climbStairs2(curr - 2, costs, dp)); // returns the minimum cost to reach from (curr - 2)th step to 0
+        }
+        if(curr - 3 >= 0) {
+            minCost = min(minCost, 9 + costs[curr - 1] + climbStairs2(curr - 3, costs, dp)); // returns the minimum cost to reach from (curr - 3)th step to 0
+        } 
+
+        return dp[curr] = minCost;
+    }
+public:
+    int climbStairs(int n, vector<int>& costs) {
+        vector<int> dp(n + 1, -1);
+        return climbStairs2(n, costs, dp); // returns the minimum cost to reach from nth step to 0
+    }
+};
+
+// tabulation
+class Solution {
+public:
+    int climbStairs(int n, vector<int>& costs) {
+        vector<int> dp(n + 1);
+        dp[n] = 0; // cost to reach nth step from nth step
+        for(int i = n - 1;i >= 0;i--) {
+            dp[i] = INT_MAX;
+            if(i + 1 <= n) {
+                dp[i] = min(dp[i], 1 + costs[i] + dp[i + 1]);
+            }
+            if(i + 2 <= n) {
+                dp[i] = min(dp[i], 4 + costs[i + 1] + dp[i + 2]);
+            }
+            if(i + 3 <= n){
+                dp[i] = min(dp[i], 9 + costs[i + 2] + dp[i + 3]);
+            }
+        }
+
+        return dp[0];
+    }
+};
