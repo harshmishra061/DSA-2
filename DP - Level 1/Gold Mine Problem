@@ -1,0 +1,66 @@
+// Recursive
+class Solution {
+    vector<vector<int>> dp;
+    int maxGold2(int i, int j, vector<vector<int>>& mat) {
+        if(j == mat[0].size() - 1) {
+            return mat[i][j];
+        }
+        
+        if(dp[i][j] != -1) return dp[i][j];
+        
+        // three options
+        int op1 = i > 0 ? mat[i][j] + maxGold2(i - 1, j + 1, mat) : -1;
+        int op2 = mat[i][j] + maxGold2(i, j + 1, mat);
+        int op3 = i + 1 < mat.size() ? mat[i][j] + maxGold2(i + 1, j + 1, mat) : -1;
+        
+        return dp[i][j] = max({op1, op2, op3});
+    }
+  public:
+    int maxGold(vector<vector<int>>& mat) {
+        int n = mat.size(), m = mat[0].size();
+        dp.resize(n, vector<int>(m, -1));
+        
+        int res = 0;
+        for(int i = 0; i < n;i++) {
+            res = max(res, maxGold2(i, 0, mat));
+        }
+        
+        return res;
+        
+    }
+};
+
+// Tabulation
+class Solution {
+  public:
+    int maxGold(vector<vector<int>>& mat) {
+        int n = mat.size(), m = mat[0].size();
+        
+        vector<vector<int>> dp(n, vector<int>(m));
+        
+        for(int j = m - 1;j >= 0;j--) {
+            for(int i = 0;i < n;i++) {
+                if(j == m - 1) {
+                    dp[i][j] = mat[i][j]; // base case
+                } else {
+                    dp[i][j] = mat[i][j] + dp[i][j + 1]; // as next pos always exist
+                    if(i - 1 >= 0) {
+                        dp[i][j] = max(dp[i][j], mat[i][j] + dp[i - 1][j + 1]);
+                    }
+                    
+                    if(i + 1 < n) {
+                        dp[i][j] = max(dp[i][j], mat[i][j] + dp[i + 1][j + 1]);
+                    }
+                }
+            }
+        }
+        
+        int res = 0;
+        for(int i = 0;i < n;i++) {
+            res = max(res, dp[i][0]);
+        }
+        
+        return res;
+        
+    }
+};
