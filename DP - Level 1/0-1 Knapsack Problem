@@ -1,0 +1,48 @@
+// Recursion
+class Solution {
+    vector<vector<int>> dp;
+    int knapsack2(int idx, vector<int>& val, vector<int>& wt, int max_weight) {
+        if(max_weight == 0) return 0;
+        if(idx == -1) return 0;
+        
+        if(dp[idx][max_weight] != -1) return dp[idx][max_weight];
+        
+        int maxi = 0;
+        // take
+        if(wt[idx] <= max_weight) {
+            maxi = max(maxi, val[idx] + knapsack2(idx - 1, val, wt, max_weight - wt[idx]));
+        }
+        // not take
+        maxi = max(maxi, knapsack2(idx - 1, val, wt, max_weight));
+        
+        return dp[idx][max_weight] = maxi;
+    }
+  public:
+    int knapsack(int W, vector<int> &val, vector<int> &wt) {
+        // choose items to maximize value with total wt < W
+        dp.resize(val.size() + 1, vector<int>(W + 1, -1));
+        return knapsack2(val.size() - 1, val, wt, W); // return the max value obtained by 0 till n - 1 item in arr
+    }
+};
+
+// Tabulation
+class Solution {
+  public:
+    int knapsack(int W, vector<int> &val, vector<int> &wt) {
+        int n = val.size();
+        vector<vector<int>> dp(n + 1, vector<int>(W + 1));
+        for(int i = 0;i < dp.size();i++) {
+            for(int j = 0;j < dp[0].size();j++) {
+                if(i == 0 || j == 0) {
+                    dp[i][j] = 0;
+                } else {
+                    dp[i][j] = dp[i - 1][j];
+                    if(wt[i - 1] <= j) {
+                        dp[i][j] = max(dp[i][j], val[i - 1] + dp[i - 1][j - wt[i - 1]]);
+                    }
+                }
+            }
+        }
+        return dp[n][W];
+    }
+};
