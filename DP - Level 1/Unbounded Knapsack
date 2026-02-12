@@ -1,4 +1,43 @@
-// Recursive
+// Recursive - 1D Space
+class Solution {
+    vector<int> dp;
+    int knapSack2(vector<int>& val, vector<int>& wt, int capacity) {
+        // repetition is allowed so even after choosing a wt/val can again try all items in next iteration
+        // so what changes is only capacity
+        if(dp[capacity] != -1) return dp[capacity];
+        int result = 0;
+        for(int i = 0;i < val.size();i++) { 
+            if(wt[i] <= capacity) {
+                result = max(result, val[i] + knapSack2(val, wt, capacity - wt[i]));
+            }
+        }
+        return dp[capacity] = result;
+    }
+  public:
+    int knapSack(vector<int>& val, vector<int>& wt, int capacity) {
+        dp.resize(capacity + 1, -1);
+        return knapSack2(val, wt, capacity);
+    }
+};
+
+// Tabulation - 1D
+class Solution {
+  public:
+    int knapSack(vector<int>& val, vector<int>& wt, int capacity) {
+        vector<int> dp(capacity + 1, 0);
+        for(int cap = 1;cap < dp.size();cap++) {
+            for(int j = 0;j < wt.size();j++) {
+                if(cap >= wt[j]) {
+                    dp[cap] = max(dp[cap], val[j] + dp[cap - wt[j]]);
+                }
+            }
+        } 
+        
+        return dp[capacity];
+    }
+};
+
+// Recursive - 2D Space
 class Solution {
     vector<vector<int>> dp;
     int knapSack2(int idx, vector<int>& val, vector<int>& wt, int capacity) {
