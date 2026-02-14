@@ -1,0 +1,63 @@
+// Recursive
+class Solution {
+    vector<vector<long long>> dp;
+    long long int distinctColoring2(int idx, int r[], int g[], int b[], int type) {
+        if(idx == -1) return 0;
+        
+        if(dp[type][idx] != -1) return dp[type][idx];
+        
+        if(type == 0) {
+            return dp[type][idx] = 1LL* r[idx] + min({distinctColoring2(idx - 1, r, g, b, 1), distinctColoring2(idx - 1, r, g, b, 2)});
+        } else if(type == 1) {
+            return dp[type][idx] = 1LL * g[idx] + min({distinctColoring2(idx - 1, r, g, b, 0), distinctColoring2(idx - 1, r, g, b, 2)});
+        }
+        
+        return dp[type][idx] = 1LL * b[idx] + min({distinctColoring2(idx - 1, r, g, b, 0), distinctColoring2(idx - 1, r, g, b, 1)});
+    }
+  public:
+    long long int distinctColoring(int N, int r[], int g[], int b[]) {
+        dp.resize(3, vector<long long>(N, -1));
+        return min({distinctColoring2(N - 1, r, g, b, 0), distinctColoring2(N - 1, r, g, b, 1), distinctColoring2(N - 1, r, g, b, 2)});
+    }
+};
+
+// Tabulation - 2D
+class Solution {
+  public:
+    long long int distinctColoring(int N, int r[], int g[], int b[]) {
+        vector<vector<long long>> dp(3, vector<long long>(N, -1));
+        dp[0][0] = r[0];
+        dp[1][0] = g[0];
+        dp[2][0] = b[0];
+        
+        for(int i = 1;i < N;i++) {
+            dp[0][i] = r[i] + min(dp[1][i - 1], dp[2][i - 1]);
+            dp[1][i] = g[i] + min(dp[0][i - 1], dp[2][i - 1]);
+            dp[2][i] = b[i] + min(dp[0][i - 1], dp[1][i - 1]);
+        }
+        
+        return min({dp[0][N - 1], dp[1][N - 1], dp[2][N - 1]});
+    }
+};
+
+// Tabulation - 3 Variables as we are only using i - 1 for calculating values at i
+class Solution {
+  public:
+    long long int distinctColoring(int N, int r[], int g[], int b[]) {
+        long long costR = r[0];
+        long long costG = g[0];
+        long long costB = b[0];
+        
+        for(int i = 1;i < N;i++) {
+            long long newCostR = r[i] + min(costG, costB);
+            long long newCostG = g[i] + min(costR, costB);
+            long long newCostB = b[i] + min(costR, costG);
+            
+            costR = newCostR;
+            costG = newCostG;
+            costB = newCostB;
+        }
+        
+        return min({costR, costG, costB});
+    }
+};
