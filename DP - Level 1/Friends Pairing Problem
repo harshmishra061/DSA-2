@@ -1,0 +1,13 @@
+class Solution {
+    vector<int> dp;
+    int countFriendsPairings2(int n) {
+        if(n == 1 || n == 2) return n;
+        if(dp[n] != -1) return dp[n];
+        return dp[n] = countFriendsPairings2(n - 1) + (n - 1) * countFriendsPairings2(n - 2);
+    }
+  public:
+    int countFriendsPairings(int n) {
+        dp.resize(n + 1, -1);
+        return countFriendsPairings2(n);
+    }
+};
